@@ -49,39 +49,3 @@ docker-compose up --build
 streamlit run streamlit_app.py
 ```
 
-## GitHub upload instructions (commands)
-Option A — using GitHub web UI (create repo on github.com and follow instructions):
-
-Option B — using git locally and push to a new remote:
-
-```bash
-git init
-git add .
-git commit -m "Initial commit — ProductionGradeRAGPythonApp"
-# create a repo on GitHub (via web) and copy the remote URL, or use the gh CLI
-# using gh CLI (optional):
-gh repo create <GH_USERNAME>/<REPO_NAME> --public --source=. --remote=origin
-git branch -M main
-git push -u origin main
-```
-
-Note: If you don't have `gh` installed, create the empty repository on github.com and then run:
-
-```bash
-git remote add origin https://github.com/<GH_USERNAME>/<REPO_NAME>.git
-git push -u origin main
-```
-
-## What to record (when polishing this log)
-- Exact dependency list and pinned versions (`requirements.txt` or `pyproject.toml`).
-- Any environment variables used (create a `.env` and record sensitive items elsewhere).
-- Exact commands you ran to generate vectors and populate Qdrant (embedding model, chunk size, batch sizes).
-- Notes about data sources (where documents came from and any preprocessing hacks).
-
-## Quick checklist before pushing
-- Add `.gitignore` (exclude `.venv`, `qdrant_storage/` if necessary, `__pycache__`, `.env`).
-- Add or redact any secrets from the repo.
-- Run lint/formatters and basic tests (if present).
-
----
-If you want, I can: create a `.gitignore`, redact sensitive files, run a short cleanup of unneeded large files (like local Qdrant snapshots), or commit and push the repo. Tell me which of these you'd like me to do next.
