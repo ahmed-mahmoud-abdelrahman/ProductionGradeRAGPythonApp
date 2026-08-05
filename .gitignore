@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtualenv
+.venv/
+venv/
+env/
+ENV/
+
+# Environment files
+.env
+.env.*
+
+# Editor directories
+.vscode/
+.idea/
+
+# Byte-compiled / distribution
+build/
+dist/
+*.egg-info/
+
+# Test
+.pytest_cache/
+
+# Qdrant local storage (large)
+qdrant_storage/
+
+# Uploads and runtime artifacts
+uploads/
+
+# OS files
+.DS_Store
+Thumbs.db
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+/uploads
+.env

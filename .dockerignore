@@ -1,0 +1,7 @@
+__pycache__/
+*.py[oc]
+.git/
+.venv/
+uploads/
+qdrant_storage/
+.env
