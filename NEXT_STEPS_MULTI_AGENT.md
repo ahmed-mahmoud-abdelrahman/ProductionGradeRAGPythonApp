@@ -45,5 +45,4 @@ def handle_request(user_input):
     return result
 ```
 
----
-If you'd like, I can scaffold the `agents/` folder with the stubs above and wire a basic coordinator that runs locally. Want me to scaffold and open a first PR in this repo? (I can also commit and push if you provide GitHub repo info.)
+
