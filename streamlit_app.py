@@ -73,15 +73,11 @@ async def send_rag_query_event(question: str, top_k: int) -> None:
 
 
 def _inngest_api_base() -> str:
-    # 1. إذا كان متغير البيئة مضبوطاً، يتم تنظيفه وتعديله ليناسب التشغيل المحلي أو داخل Docker
     env_base = os.getenv("INNGEST_API_BASE")
     if env_base:
-        # استبدال أسماء الهوست القديمة (مثل app أو host.docker.internal) بـ 127.0.0.1 لضمان التشغيل من البيئة المحلية
         clean_url = env_base.replace("host.docker.internal", "127.0.0.1").replace("http://app:", "http://127.0.0.1:")
-        # التأكد من التوجيه لبورت Inngest الصحيح (8288)
         return clean_url.replace(":8000", ":8288")
 
-    # 2. العنوان الافتراضي للخادم المحلي Inngest Dev Server
     return "http://127.0.0.1:8288/v1"
 
 
