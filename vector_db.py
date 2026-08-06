@@ -5,7 +5,7 @@ from qdrant_client.models import VectorParams, Distance, PointStruct, Filter, Fi
 
 class QdrantStorage:
     def __init__(self, url=None, collection="docs", dim=3072):
-        # قراءة المسار من المتغيرات وتصحيحه للتشغيل المحلي
+        
         raw_url = url or os.getenv("QDRANT_URL", "http://localhost:6333")
         if "http://qdrant" in raw_url:
             raw_url = raw_url.replace("http://qdrant", "http://localhost")
@@ -13,7 +13,6 @@ class QdrantStorage:
         self.client = QdrantClient(url=raw_url, timeout=30)
         self.collection = collection
 
-        # إنشاء الـ Collection إذا لم تكن موجودة
         if not self.client.collection_exists(self.collection):
             self.client.create_collection(
                 collection_name=self.collection,
@@ -25,7 +24,6 @@ class QdrantStorage:
         self.client.upsert(collection_name=self.collection, points=points)
 
     def search(self, query_vector, top_k: int = 5, source_file: str = None):
-        # تصفية البحث بناءً على اسم الملف المرفوع إذا تم تحديده
         query_filter = None
         if source_file:
             query_filter = Filter(
@@ -37,7 +35,6 @@ class QdrantStorage:
                 ]
             )
 
-        # تنفيذ عملية البحث مع دعم الإصدارات المختلفة من qdrant-client
         try:
             results = self.client.query_points(
                 collection_name=self.collection,
