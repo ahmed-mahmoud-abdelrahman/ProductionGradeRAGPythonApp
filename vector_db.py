@@ -66,7 +66,6 @@ class QdrantStorage:
         return {"contexts": contexts, "sources": list(sources)}
 
     def clear_collection(self):
-        """دالة اختيارية لمسح جميع الملفات القديمة وإعادة بناء الـ Collection"""
         if self.client.collection_exists(self.collection):
             self.client.delete_collection(collection_name=self.collection)
             self.client.create_collection(
