@@ -1,19 +1,8 @@
-"""Coordinator: simple orchestrator for agent stubs."""
-from .retriever import Retriever
-from .planner import Planner
-from .synthesizer import Synthesizer
+"""Coordinator: orchestrates requests using the LangChain RAG Agent."""
+from agent import run_rag_agent
 
 
-def handle_request(user_input: str):
-    """Handle a user request by creating a plan, retrieving docs, and synthesizing.
+def handle_request(user_input: str, langsmith_api_key: str = None):
+    """Handle a user request using the LangChain RAG AI Agent."""
+    return run_rag_agent(user_input, langsmith_api_key=langsmith_api_key)
 
-    This is intentionally synchronous and minimal for an MVP.
-    """
-    planner = Planner()
-    plan = planner.create_plan(user_input)
-
-    retriever = Retriever()
-    docs = retriever.search(plan.get("query", user_input))
-
-    synthesizer = Synthesizer()
-    return synthesizer.merge(docs, plan)

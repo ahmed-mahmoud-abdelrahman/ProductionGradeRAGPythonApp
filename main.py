@@ -53,50 +53,28 @@ async def rag_ingest_pdf(ctx: inngest.Context):
     return ingested.model_dump()
 
 
+from agent import run_rag_agent
+
+
 @inngest_client.create_function(
     fn_id="RAG: Query PDF",
     trigger=inngest.TriggerEvent(event="rag/query_pdf_ai")
 )
 async def rag_query_pdf_ai(ctx: inngest.Context):
-    def _search(question: str, top_k: int = 5) -> RAGSearchResult:
-        query_vec = embed_texts([question])[0]
-        store = QdrantStorage()
-        found = store.search(query_vec, top_k)
-        return RAGSearchResult(contexts=found["contexts"], sources=found["sources"])
-
     question = ctx.event.data["question"]
-    top_k = int(ctx.event.data.get("top_k", 5))
+    langsmith_key = ctx.event.data.get("langsmith_api_key")
+    chat_history = ctx.event.data.get("chat_history", [])
 
-    found = await ctx.step.run("embed-and-search", lambda: _search(question, top_k), output_type=RAGSearchResult)
+    def _execute_agent():
+        return run_rag_agent(
+            user_input=question,
+            chat_history=chat_history,
+            langsmith_api_key=langsmith_key
+        )
 
-    context_block = "\n\n".join(f"- {c}" for c in found.contexts)
-    user_content = (
-        "Use the following context to answer the question.\n\n"
-        f"Context:\n{context_block}\n\n"
-        f"Question: {question}\n"
-        "Answer concisely using the context above."
-    )
+    agent_result = await ctx.step.run("langchain-agent-execution", _execute_agent)
+    return agent_result
 
-    adapter = ai.openai.Adapter(
-        auth_key=os.getenv("OPENAI_API_KEY"),
-        model="gpt-4o-mini"
-    )
-
-    res = await ctx.step.ai.infer(
-        "llm-answer",
-        adapter=adapter,
-        body={
-            "max_tokens": 1024,
-            "temperature": 0.2,
-            "messages": [
-                {"role": "system", "content": "You answer questions using only the provided context."},
-                {"role": "user", "content": user_content}
-            ]
-        }
-    )
-
-    answer = res["choices"][0]["message"]["content"].strip()
-    return {"answer": answer, "sources": found.sources, "num_contexts": len(found.contexts)}
 
 app = FastAPI()
 

@@ -1,12 +1,17 @@
 [project]
 name = "ragproductionapp"
 version = "0.1.0"
-description = "Add your description here"
+description = "Production-Grade RAG AI Agent with LangChain, LangGraph, Qdrant Vector DB, Inngest Async Workflows, LangSmith Tracing, and Streamlit Chat UI"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "fastapi>=0.116.1",
     "inngest>=0.5.6",
+    "langchain>=0.3.0",
+    "langchain-community>=0.3.0",
+    "langchain-openai>=0.2.0",
+    "langgraph>=0.2.0",
+    "langsmith>=0.1.0",
     "llama-index-core>=0.14.0",
     "llama-index-readers-file>=0.5.4",
     "openai>=1.107.0",

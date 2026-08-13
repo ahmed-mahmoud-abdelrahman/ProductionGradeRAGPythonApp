@@ -5,7 +5,6 @@ from qdrant_client.models import VectorParams, Distance, PointStruct, Filter, Fi
 
 class QdrantStorage:
     def __init__(self, url=None, collection="docs", dim=3072):
-        
         raw_url = url or os.getenv("QDRANT_URL", "http://localhost:6333")
         if "http://qdrant" in raw_url:
             raw_url = raw_url.replace("http://qdrant", "http://localhost")
@@ -66,6 +65,7 @@ class QdrantStorage:
         return {"contexts": contexts, "sources": list(sources)}
 
     def clear_collection(self):
+
         if self.client.collection_exists(self.collection):
             self.client.delete_collection(collection_name=self.collection)
             self.client.create_collection(

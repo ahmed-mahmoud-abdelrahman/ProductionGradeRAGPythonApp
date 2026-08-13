@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Production RAG AI Agent & LangSmith Architecture</title>
+  <style>
+    :root {
+      --bg-dark: #0b0f19;
+      --surface-card: #151c2c;
+      --border-card: #26334d;
+      --accent-cyan: #38bdf8;
+      --accent-purple: #c084fc;
+      --accent-green: #4ade80;
+      --accent-amber: #fbbf24;
+      --accent-pink: #f472b6;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    body {
+      background: var(--bg-dark);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      color: var(--text-main);
+      padding: 32px 16px;
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    .wrap {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .title-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .title-header h1 {
+      font-size: 26px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple), var(--accent-pink));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin: 0 0 8px 0;
+    }
+
+    .title-header p {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    .tech-pills {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid transparent;
+    }
+
+    .pill-cyan {
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent-cyan);
+      border-color: rgba(56, 189, 248, 0.3);
+    }
+
+    .pill-purple {
+      background: rgba(192, 132, 252, 0.15);
+      color: var(--accent-purple);
+      border-color: rgba(192, 132, 252, 0.3);
+    }
+
+    .pill-green {
+      background: rgba(74, 222, 128, 0.15);
+      color: var(--accent-green);
+      border-color: rgba(74, 222, 128, 0.3);
+    }
+
+    .pill-amber {
+      background: rgba(251, 191, 36, 0.15);
+      color: var(--accent-amber);
+      border-color: rgba(251, 191, 36, 0.3);
+    }
+
+    .container-box {
+      background: rgba(21, 28, 44, 0.6);
+      border: 1px solid var(--border-card);
+      border-radius: 20px;
+      padding: 28px 24px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      margin-bottom: 24px;
+    }
+
+    .grid2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .grid2 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .node {
+      background: var(--surface-card);
+      border: 1px solid var(--border-card);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 12px;
+      transition: all 0.2s ease-in-out;
+      position: relative;
+    }
+
+    .node:hover {
+      border-color: var(--accent-cyan);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(56, 189, 248, 0.15);
+    }
+
+    .node-title {
+      font-size: 14px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .node-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .wire {
+      position: relative;
+      width: 2px;
+      height: 22px;
+      margin: 0 auto 12px auto;
+      background: var(--border-card);
+    }
+
+    .wire .dot {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      width: 6px;
+      height: 6px;
+      margin-left: -3px;
+      border-radius: 50%;
+      background: var(--accent-cyan);
+      animation: flow 1.8s linear infinite;
+    }
+
+    @keyframes flow {
+      0% {
+        top: 0;
+        opacity: 0;
+      }
+
+      20% {
+        opacity: 1;
+      }
+
+      80% {
+        opacity: 1;
+      }
+
+      100% {
+        top: 100%;
+        opacity: 0;
+      }
+    }
+
+    .section-label {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 14px;
+      text-align: center;
+      color: var(--accent-cyan);
+    }
+
+    .obs-box {
+      background: linear-gradient(135deg, rgba(74, 222, 128, 0.05), rgba(56, 189, 248, 0.05));
+      border: 1px dashed var(--accent-green);
+      border-radius: 14px;
+      padding: 16px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="wrap">
+    <div class="title-header">
+      <h1>Production RAG AI Agent Architecture</h1>
+      <p>LangChain Agent Reasoning Loop, Qdrant Vector RAG & LangSmith Observability</p>
+
+      <div class="tech-pills">
+        <span class="pill pill-cyan">Streamlit Chat UI</span>
+        <span class="pill pill-purple">LangChain 0.3 Agent</span>
+        <span class="pill pill-green">LangSmith Observability</span>
+        <span class="pill pill-amber">Qdrant Vector DB</span>
+        <span class="pill pill-cyan">Inngest Workflow</span>
+      </div>
+    </div>
+
+    <div class="container-box">
+      <!-- UI Layer -->
+      <div style="max-width: 450px; margin: 0 auto;">
+        <div class="node" style="border-color: var(--accent-cyan);">
+          <div class="node-title">
+            <div class="icon" style="background: rgba(56, 189, 248, 0.2); color: var(--accent-cyan);">💬</div>
+            Streamlit Scrollable Chat UI
+          </div>
+          <div class="node-sub">Full Conversation Memory, Interactive Questions, & Expandable Agent Thoughts</div>
+        </div>
+
+        <div class="wire">
+          <div class="dot"></div>
+        </div>
+
+        <div class="node">
+          <div class="node-title">
+            <div class="icon" style="background: rgba(251, 191, 36, 0.2); color: var(--accent-amber);">⚡</div>
+            FastAPI & Inngest Async Event Engine
+          </div>
+          <div class="node-sub">Triggers Background Ingest & Query Events with Retries & Rate-Limiting</div>
+        </div>
+      </div>
+
+      <div class="wire" style="height: 28px;">
+        <div class="dot" style="animation-delay: 0.3s;"></div>
+      </div>
+
+      <!-- Pipelines Grid -->
+      <div class="grid2">
+        <!-- Ingestion Pipeline -->
+        <div>
+          <div class="section-label" style="color: var(--accent-amber);">1. PDF Ingestion Pipeline</div>
+
+          <div class="node">
+            <div class="node-title">
+              <div class="icon" style="background: rgba(244, 114, 182, 0.2); color: var(--accent-pink);">📄</div>
+              LlamaIndex PDF Reader
+            </div>
+            <div class="node-sub">Parses uploaded PDF files & extracts text</div>
+          </div>
+
+          <div class="wire">
+            <div class="dot" style="animation-delay: 0.4s;"></div>
+          </div>
+
+          <div class="node">
+            <div class="node-title">
+              <div class="icon" style="background: rgba(251, 191, 36, 0.2); color: var(--accent-amber);">✂️</div>
+              Sentence Splitter
+            </div>
+            <div class="node-sub">Chunks text into 1000-char overlapping segments</div>
+          </div>
+
+          <div class="wire">
+            <div class="dot" style="animation-delay: 0.6s;"></div>
+          </div>
+
+          <div class="node">
+            <div class="node-title">
+              <div class="icon" style="background: rgba(74, 222, 128, 0.2); color: var(--accent-green);">🧬</div>
+              OpenAI Embeddings (3072-dim)
+            </div>
+            <div class="node-sub">Generates dense vectors via `text-embedding-3-large`</div>
+          </div>
+
+          <div class="wire">
+            <div class="dot" style="animation-delay: 0.8s;"></div>
+          </div>
+
+          <div class="node" style="border-color: var(--accent-amber);">
+            <div class="node-title">
+              <div class="icon" style="background: rgba(251, 191, 36, 0.2); color: var(--accent-amber);">📦</div>
+              Qdrant Vector Database
+            </div>
+            <div class="node-sub">Stores vectors & payload metadata for fast Cosine search</div>
+          </div>
+        </div>
+
+        <!-- Agent Reasoning Pipeline -->
+        <div>
+          <div class="section-label" style="color: var(--accent-purple);">2. LangChain AI Agent Loop</div>
+
+          <div class="node" style="border-color: var(--accent-purple);">
+            <div class="node-title">
+              <div class="icon" style="background: rgba(192, 132, 252, 0.2); color: var(--accent-purple);">🧠</div>
+              LangChain Agent Planner & Router
+            </div>
+            <div class="node-sub">Analyzes query intent; decides direct answer vs retrieval tool call</div>
+          </div>
+
+          <div class="wire">
+            <div class="dot" style="animation-delay: 0.5s;"></div>
+          </div>
+
+          <div class="node">
+            <div class="node-title">
+              <div class="icon" style="background: rgba(56, 189, 248, 0.2); color: var(--accent-cyan);">🛠️</div>
+              Qdrant Retrieval Tool (`search_qdrant_docs`)
+            </div>
+            <div class="node-sub">Queries vector database to extract top-K grounding passages</div>
+          </div>
+
+          <div class="wire">
+            <div class="dot" style="animation-delay: 0.7s;"></div>
+          </div>
+
+          <div class="node">
+            <div class="node-title">
+              <div class="icon" style="background: rgba(192, 132, 252, 0.2); color: var(--accent-purple);">🤖</div>
+              OpenAI GPT-4o-mini Engine
+            </div>
+            <div class="node-sub">Synthesizes context-grounded response with citations</div>
+          </div>
+
+          <div class="wire">
+            <div class="dot" style="animation-delay: 0.9s;"></div>
+          </div>
+
+          <div class="node">
+            <div class="node-title">
+              <div class="icon" style="background: rgba(56, 189, 248, 0.2); color: var(--accent-cyan);">✨</div>
+              Formatted Answer & Source Badges
+            </div>
+            <div class="node-sub">Pushed back to Streamlit Chat UI with execution steps</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Observability Box -->
+      <div class="obs-box">
+        <div class="node-title" style="color: var(--accent-green);">
+          <div class="icon" style="background: rgba(74, 222, 128, 0.2); color: var(--accent-green);">🔭</div>
+          LangSmith Observability Platform
+        </div>
+        <div class="node-sub" style="color: #cbd5e1; margin-top: 6px;">
+          Streams real-time execution traces for every prompt, agent planning step, tool call input/output, token
+          consumption, and response latency to <strong>smith.langchain.com</strong>.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+
+</html>
