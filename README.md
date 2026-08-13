@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🤖 Production-Grade RAG AI Agent
+#  Production-Grade RAG AI Agent
 ### Multi-Step Agentic Reasoning • Qdrant Vector DB • Inngest Async Workflows • LangSmith Tracing • Streamlit Chat UI
 
 [![Python Version](https://img.shields.io/badge/Python-3.13%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
